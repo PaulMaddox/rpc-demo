@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/dghubble/go-twitter/twitter"
 	"github.com/dghubble/oauth1"
@@ -12,8 +13,8 @@ import (
 )
 
 var (
-	// SearchTerm defines the Twitter search phrase subscribe to
-	SearchTerm = os.Getenv("SEARCH_TERM")
+	// SearchTerms defines the Twitter search phrases subscribe to
+	SearchTerms = os.Getenv("SEARCH_TERMS")
 
 	// ArchiveEndpoint is the URL of the archiving service
 	ArchiveEndpoint = os.Getenv("ARCHIVE_ENDPOINT")
@@ -21,15 +22,13 @@ var (
 
 func main() {
 
-	fmt.Printf("SEARCH_TERM: %s\n", SearchTerm)
+	fmt.Printf("SEARCH_TERMS: %s\n", SearchTerms)
 	fmt.Printf("ARCHIVE_ENDPOINT: %s\n", ArchiveEndpoint)
 	fmt.Printf("AWS_REGION: %s\n", os.Getenv("AWS_REGION"))
-	fmt.Printf("AWS_ACCESS_KEY_ID: %s\n", os.Getenv("AWS_ACCESS_KEY_ID"))
-	fmt.Printf("AWS_SECRET_ACCESS_KEY: %s\n", os.Getenv("AWS_SECRET_ACCESS_KEY"))
 
 	// Search twitter for the term provided by the env var SEARCH_TERM
 	params := &twitter.StreamFilterParams{
-		Track:         []string{SearchTerm},
+		Track:         strings.Split(SearchTerms, " "),
 		StallWarnings: twitter.Bool(true),
 	}
 

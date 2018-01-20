@@ -8,7 +8,7 @@ services:
     depends_on: 
       - archiver
     environment: 
-      - SEARCH_TERM=lol
+      - SEARCH_TERMS="aws cloud"
       - ARCHIVE_ENDPOINT=http://archiver:8080 
       - AWS_REGION=eu-west-1
       - AWS_ACCESS_KEY_ID
