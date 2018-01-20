@@ -18,7 +18,7 @@ services:
     build: ./archiver
     image: 860498507463.dkr.ecr.eu-west-1.amazonaws.com/rpc-demo/archiver
     environment: 
-      - KINESIS_STREAM_ARN=lol
+      - KINESIS_STREAM_NAME=tweets
       - AWS_REGION=eu-west-1
       - AWS_ACCESS_KEY_ID
       - AWS_SECRET_ACCESS_KEY
