@@ -1,0 +1,22 @@
+version: '2'
+
+services:
+
+  collector:
+    build: ./collector
+    command: /app
+    depends_on: 
+      - archiver
+    environment: 
+      SEARCH_TERM: lol
+      ARCHIVE_ENDPOINT: http://archiver:8080 
+
+  archiver: 
+    build: ./archiver
+    command: /app
+    ports: 
+      - "8080:8080"
+    
+
+
+

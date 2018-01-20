@@ -1,0 +1,15 @@
+syntax = "proto3";
+package twitterarchive;
+
+service TwitterArchive {
+  rpc Create(CreateRequest) returns (CreateResponse) {}
+}
+
+message CreateRequest {
+  string name = 1;
+  string message = 2;
+}
+
+message CreateResponse {
+  bool ok = 1;
+}
