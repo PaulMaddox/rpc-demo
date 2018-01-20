@@ -11,5 +11,6 @@ message CreateRequest {
 }
 
 message CreateResponse {
-  bool ok = 1;
+  string sequence = 1;
+  string shard = 2;
 }

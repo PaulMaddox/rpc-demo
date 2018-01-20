@@ -21,6 +21,12 @@ var (
 
 func main() {
 
+	fmt.Printf("SEARCH_TERM: %s\n", SearchTerm)
+	fmt.Printf("ARCHIVE_ENDPOINT: %s\n", ArchiveEndpoint)
+	fmt.Printf("AWS_REGION: %s\n", os.Getenv("AWS_REGION"))
+	fmt.Printf("AWS_ACCESS_KEY_ID: %s\n", os.Getenv("AWS_ACCESS_KEY_ID"))
+	fmt.Printf("AWS_SECRET_ACCESS_KEY: %s\n", os.Getenv("AWS_SECRET_ACCESS_KEY"))
+
 	// Search twitter for the term provided by the env var SEARCH_TERM
 	params := &twitter.StreamFilterParams{
 		Track:         []string{SearchTerm},

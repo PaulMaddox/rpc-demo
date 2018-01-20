@@ -4,19 +4,24 @@ services:
 
   collector:
     build: ./collector
-    command: /app
+    image: 860498507463.dkr.ecr.eu-west-1.amazonaws.com/rpc-demo/collector
     depends_on: 
       - archiver
     environment: 
-      SEARCH_TERM: lol
-      ARCHIVE_ENDPOINT: http://archiver:8080 
+      - SEARCH_TERM=lol
+      - ARCHIVE_ENDPOINT=http://archiver:8080 
+      - AWS_REGION=eu-west-1
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
 
   archiver: 
     build: ./archiver
-    command: /app
+    image: 860498507463.dkr.ecr.eu-west-1.amazonaws.com/rpc-demo/archiver
+    environment: 
+      - KINESIS_STREAM_ARN=lol
+      - AWS_REGION=eu-west-1
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
     ports: 
       - "8080:8080"
-    
-
-
 
