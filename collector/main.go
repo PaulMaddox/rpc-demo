@@ -14,7 +14,7 @@ import (
 
 var (
 	// SearchTerms defines the Twitter search phrases subscribe to
-	SearchTerms = os.Getenv("SEARCH_TERMS")
+	SearchTerms = strings.Split(os.Getenv("SEARCH_TERMS"), " ")
 
 	// ArchiveEndpoint is the URL of the archiving service
 	ArchiveEndpoint = os.Getenv("ARCHIVE_ENDPOINT")
@@ -26,9 +26,9 @@ func main() {
 	fmt.Printf("ARCHIVE_ENDPOINT: %s\n", ArchiveEndpoint)
 	fmt.Printf("AWS_REGION: %s\n", os.Getenv("AWS_REGION"))
 
-	// Search twitter for the term provided by the env var SEARCH_TERM
+	// Search twitter for the terms provided by the env var SEARCH_TERMS
 	params := &twitter.StreamFilterParams{
-		Track:         strings.Split(SearchTerms, " "),
+		Track:         SearchTerms,
 		StallWarnings: twitter.Bool(true),
 	}
 

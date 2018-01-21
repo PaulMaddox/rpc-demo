@@ -8,11 +8,16 @@ services:
     depends_on: 
       - archiver
     environment: 
-      - SEARCH_TERMS="aws cloud"
-      - ARCHIVE_ENDPOINT=http://archiver:8080 
+      - SEARCH_TERMS=lol
+      - ARCHIVE_ENDPOINT=http://localhost:8080 
       - AWS_REGION=eu-west-1
-      - AWS_ACCESS_KEY_ID
-      - AWS_SECRET_ACCESS_KEY
+    volumes:
+      - $HOME/.aws:/root/.aws
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: eu-west-1
+        awslogs-group: /rpc-demo/collector
 
   archiver: 
     build: ./archiver
@@ -20,8 +25,13 @@ services:
     environment: 
       - KINESIS_STREAM_NAME=tweets
       - AWS_REGION=eu-west-1
-      - AWS_ACCESS_KEY_ID
-      - AWS_SECRET_ACCESS_KEY
     ports: 
       - "8080:8080"
-
+    volumes:
+      - $HOME/.aws:/root/.aws
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: eu-west-1
+        awslogs-group: /rpc-demo/archiver
+      
