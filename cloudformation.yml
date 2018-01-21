@@ -1,0 +1,98 @@
+Description: >
+    Deploys a Twitter archiver. Made up of two microservices, one to collect tweets from
+    the Twitter API, and another to archive them to an Amazon Kinesis Stream.
+
+Parameters: 
+
+  SearchTerms:
+    Description: Tweets matching the search terms will be archived
+    Type: String
+    Default: aws OR cloud
+
+  VPC:
+    Description: The VPC that the ECS cluster is deployed to
+    Type: AWS::EC2::VPC::Id
+    Default: vpc-de38c0b8
+
+  Subnets: 
+    Description: The subnets to bring up the services in
+    Type: List<AWS::EC2::Subnet::Id>
+    Default: subnet-6b987623,subnet-04587f5f
+      
+  Cluster:
+    Description: Please provide the ECS Cluster ID that this service should run on
+    Type: String
+    Default: Production
+
+  DesiredCount: 
+    Description: How many instances of this task should we run across our cluster?
+    Type: Number
+    Default: 1
+
+Resources:
+
+  Service: 
+    Type: AWS::ECS::Service
+    Properties: 
+      Cluster: !Ref Cluster
+      DesiredCount: !Ref DesiredCount
+      TaskDefinition: !Ref TaskDefinition
+      NetworkConfiguration: 
+        AwsvpcConfiguration:
+          Subnets: !Ref Subnets
+
+  TaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: tweets
+      NetworkMode: awsvpc
+      TaskRoleArn: arn:aws:iam::860498507463:role/rpc-demo      
+      ContainerDefinitions:
+
+        - Name: collector
+          Essential: true
+          Image: 860498507463.dkr.ecr.eu-west-1.amazonaws.com/rpc-demo/collector:latest
+          Memory: 128
+          Environment: 
+            - Name: SEARCH_TERMS
+              Value: !Ref SearchTerms
+            - Name: ARCHIVE_ENDPOINT
+              Value: http://localhost:8080
+            - Name: AWS_REGION
+              Value: !Ref AWS::Region
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref AWS::StackName
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: collector
+
+        - Name: archiver
+          Essential: true
+          Image: 860498507463.dkr.ecr.eu-west-1.amazonaws.com/rpc-demo/archiver:latest
+          Memory: 128
+          Environment: 
+            - Name: KINESIS_STREAM_NAME
+              Value: !Ref KinesisStream
+            - Name: AWS_REGION
+              Value: !Ref AWS::Region
+          PortMappings:
+            - ContainerPort: 8080
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+                awslogs-group: !Ref AWS::StackName
+                awslogs-region: !Ref AWS::Region
+                awslogs-stream-prefix: archiver
+
+  CloudWatchLogsGroup:
+    Type: AWS::Logs::LogGroup
+    Properties: 
+      LogGroupName: !Ref AWS::StackName
+      RetentionInDays: 365  
+
+  KinesisStream: 
+    Type: AWS::Kinesis::Stream
+    Properties:
+      Name: !Ref AWS::StackName
+      ShardCount: 10

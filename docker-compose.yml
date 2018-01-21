@@ -9,15 +9,10 @@ services:
       - archiver
     environment: 
       - SEARCH_TERMS=lol
-      - ARCHIVE_ENDPOINT=http://localhost:8080 
+      - ARCHIVE_ENDPOINT=http://archiver:8080 
       - AWS_REGION=eu-west-1
     volumes:
       - $HOME/.aws:/root/.aws
-    logging:
-      driver: awslogs
-      options:
-        awslogs-region: eu-west-1
-        awslogs-group: /rpc-demo/collector
 
   archiver: 
     build: ./archiver
@@ -29,9 +24,4 @@ services:
       - "8080:8080"
     volumes:
       - $HOME/.aws:/root/.aws
-    logging:
-      driver: awslogs
-      options:
-        awslogs-region: eu-west-1
-        awslogs-group: /rpc-demo/archiver
-      
+   
