@@ -11,14 +11,15 @@ import (
 	"github.com/twitchtv/twirp"
 )
 
-// TwitterArchiveServer implements archiving for Tweets
-type TwitterArchiveServer struct {
+// Server implements the RPC methods required for archiving Tweets
+type Server struct {
 	KinesisService    *kinesis.Kinesis
 	KinesisStreamName string
 }
 
-// New instantiates a new instance of the TwitterArchiveServer
-func New(region string, streamName string) *TwitterArchiveServer {
+// New instantiates a new instance of a server that implements
+// the RPC methods required for archiving tweets
+func New(region string, streamName string) *Server {
 
 	cfg, err := external.LoadDefaultAWSConfig()
 	if err != nil {
@@ -28,7 +29,7 @@ func New(region string, streamName string) *TwitterArchiveServer {
 	// Set the AWS Region that the service clients should use
 	cfg.Region = region
 
-	return &TwitterArchiveServer{
+	return &Server{
 		KinesisService:    kinesis.New(cfg),
 		KinesisStreamName: streamName,
 	}
@@ -36,7 +37,7 @@ func New(region string, streamName string) *TwitterArchiveServer {
 }
 
 // Create receives a Tweet, and archives it to an Amazon Kinesis Stream.
-func (t *TwitterArchiveServer) Create(ctx context.Context, req *CreateRequest) (*CreateResponse, error) {
+func (t *Server) Create(ctx context.Context, req *CreateRequest) (*CreateResponse, error) {
 
 	if len(req.Name) < 1 {
 		return nil, twirp.InvalidArgumentError("name", "not set")
