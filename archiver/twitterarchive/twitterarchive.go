@@ -11,11 +11,13 @@ import (
 	"github.com/twitchtv/twirp"
 )
 
+// TwitterArchiveServer implements archiving for Tweets
 type TwitterArchiveServer struct {
 	KinesisService    *kinesis.Kinesis
 	KinesisStreamName string
 }
 
+// New instantiates a new instance of the TwitterArchiveServer
 func New(region string, streamName string) *TwitterArchiveServer {
 
 	cfg, err := external.LoadDefaultAWSConfig()
@@ -33,6 +35,7 @@ func New(region string, streamName string) *TwitterArchiveServer {
 
 }
 
+// Create receives a Tweet, and archives it to an Amazon Kinesis Stream.
 func (t *TwitterArchiveServer) Create(ctx context.Context, req *CreateRequest) (*CreateResponse, error) {
 
 	if len(req.Name) < 1 {
